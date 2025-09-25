@@ -21,6 +21,37 @@ def compress(uncompressed):
         result.append(dictionary[w])
     return result
 
+def uncompress(compressed):
+    dict_size = 256
+    dictionary = dict((i, chr(i)) for i in range(dict_size))
+    result = []
+    
+    if not compressed:
+        return ""
+    
+    # Initialize with first code
+    w = chr(compressed[0])
+    result.append(w)
+    
+    for code in compressed[1:]:
+        if code in dictionary:
+            entry = dictionary[code]
+        elif code == dict_size:
+            # Special case: code not yet in dictionary
+            entry = w + w[0]
+        else:
+            raise ValueError(f"Invalid compressed code: {code}")
+        
+        result.append(entry)
+        
+        # Add new entry to dictionary
+        dictionary[dict_size] = w + entry[0]
+        dict_size += 1
+        
+        w = entry
+    
+    return ''.join(result)
+
 def main() -> int:
 	# Image generation
     height, width = 100, 100
@@ -40,6 +71,10 @@ def main() -> int:
     print(f"Number of codes: {num_codes}")
     print(f"Approximate size with compression: {approx_size} bits")
 
+    # Test decompression
+    decompressed = uncompress(compressed_codes)
+    print(f"Compression/decompression successful: {uncompressed == decompressed}")
+    
     return 
 
 if __name__ == "__main__":
