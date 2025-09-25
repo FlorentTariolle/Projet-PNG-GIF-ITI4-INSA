@@ -71,16 +71,24 @@ def main() -> int:
 
     print(f"Number of codes: {num_codes}")
     print(f"Approximate size with compression: {approx_size} bits")
-
+    
     # Test decompression
     decompressed = uncompress(compressed_codes)
     print(f"Compression/decompression successful: {uncompressed == decompressed}")
     
-    
     # Image reconstruction
     decompressed_image = np.array([ord(c) for c in decompressed], dtype=np.uint8)
     reconstructed_image = decompressed_image.reshape((height, width))
-
+    
+    # Test with a simple string
+    test_string = "TOBEORNOTTOBEORTOBEORNOT"
+    print(f"\nTest with string: '{test_string}'")
+    compressed_test = compress(test_string)
+    decompressed_test = uncompress(compressed_test)
+    print(f"Compressed codes: {compressed_test}")
+    print(f"Decompressed: '{decompressed_test}'")
+    print(f"Test successful: {test_string == decompressed_test}")
+    
     # Display images
     fig, axes = plt.subplots(1, 3, figsize=(15, 5))
     
@@ -109,8 +117,9 @@ def main() -> int:
     if not images_match:
         max_diff = np.max(difference)
         print(f"Maximum difference: {max_diff}")
-    
+
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())
