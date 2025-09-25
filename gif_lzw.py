@@ -1,10 +1,35 @@
 #!/usr/bin/env python3
+"""
+LZW (Lempel-Ziv-Welch) Compression and Decompression Implementation
+
+This module implements the LZW algorithm for lossless data compression.
+It includes functions for compressing and decompressing strings, with
+demonstration code for image compression and visualization.
+
+The LZW algorithm works by building a dictionary of character sequences
+during compression and using numerical codes to represent repeated patterns,
+resulting in data compression for files with repetitive content.
+"""
 
 import numpy as np
 import sys
 import matplotlib.pyplot as plt
 
 def compress(uncompressed):
+    """
+    Compress a string using the LZW (Lempel-Ziv-Welch) algorithm.
+    
+    Args:
+        uncompressed (str): The input string to compress.
+        
+    Returns:
+        list: A list of integer codes representing the compressed data.
+        
+    Note:
+        The algorithm builds a dictionary of character sequences during compression,
+        starting with all possible single characters (0-255) and expanding as
+        repeated patterns are found.
+    """
     dict_size = 256
     dictionary = dict((chr(i), i) for i in range(dict_size))
     w = ""
@@ -23,6 +48,24 @@ def compress(uncompressed):
     return result
 
 def uncompress(compressed):
+    """
+    Decompress a list of LZW codes back to the original string.
+    
+    Args:
+        compressed (list): A list of integer codes from LZW compression.
+        
+    Returns:
+        str: The decompressed string.
+        
+    Raises:
+        ValueError: If an invalid compressed code is encountered.
+        
+    Note:
+        This function reverses the LZW compression process by rebuilding the
+        dictionary and converting codes back to character sequences.
+        It handles the special case where a code references a dictionary entry
+        that hasn't been created yet.
+    """
     dict_size = 256
     dictionary = dict((i, chr(i)) for i in range(dict_size))
     result = []
@@ -54,6 +97,15 @@ def uncompress(compressed):
     return ''.join(result)
 
 def main() -> int:
+    """
+    Main function demonstrating LZW compression and decompression.
+    
+    Creates a test image, compresses it using LZW, decompresses it back,
+    and visualizes the results. Also tests compression on a simple string.
+    
+    Returns:
+        int: Exit code (0 for success).
+    """
 	# Image generation
     height, width = 100, 100
     image = np.zeros((height, width), dtype=np.uint8)
