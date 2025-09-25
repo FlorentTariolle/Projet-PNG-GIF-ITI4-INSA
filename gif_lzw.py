@@ -2,6 +2,7 @@
 
 import numpy as np
 import sys
+import matplotlib.pyplot as plt
 
 def compress(uncompressed):
     dict_size = 256
@@ -75,7 +76,41 @@ def main() -> int:
     decompressed = uncompress(compressed_codes)
     print(f"Compression/decompression successful: {uncompressed == decompressed}")
     
-    return 
+    
+    # Image reconstruction
+    decompressed_image = np.array([ord(c) for c in decompressed], dtype=np.uint8)
+    reconstructed_image = decompressed_image.reshape((height, width))
+
+    # Display images
+    fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+    
+    # Original image
+    axes[0].imshow(image, cmap='gray')
+    axes[0].set_title('Original image')
+    axes[0].axis('off')
+    
+    # Reconstructed image
+    axes[1].imshow(reconstructed_image, cmap='gray')
+    axes[1].set_title('Reconstructed image')
+    axes[1].axis('off')
+    
+    # Difference between images
+    difference = np.abs(image.astype(int) - reconstructed_image.astype(int))
+    axes[2].imshow(difference, cmap='hot')
+    axes[2].set_title('Difference (should be black)')
+    axes[2].axis('off')
+    
+    plt.tight_layout()
+    plt.show()
+    
+    # Reconstruction verification
+    images_match = np.array_equal(image, reconstructed_image)
+    print(f"\nPerfect image reconstruction: {images_match}")
+    if not images_match:
+        max_diff = np.max(difference)
+        print(f"Maximum difference: {max_diff}")
+    
+    return 0
 
 if __name__ == "__main__":
     sys.exit(main())
